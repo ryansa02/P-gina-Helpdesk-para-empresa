@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajuda - Sistema de Chamados | Geórgia Contábl</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Ajuda - Sistema de Chamados">
+</head>
+<body>
+    <div class="container">
+        <h1 class="brand">Ajuda — Geórgia Contábl</h1>
+
+        <div class="form-card" id="login-form">
+            <div class="form-header">
+                <h2>Acessar Ajuda</h2>
+            </div>
+            <div class="message" id="login-message"></div>
+
+            <label for="login-email">Usuário</label>
+            <input type="email" id="login-email" placeholder="email@empresa.com" autocomplete="username" required>
+
+            <label for="login-senha">Senha...</label>
+            <input type="password" id="login-senha" placeholder="Sua senha" autocomplete="current-password" required>
+
+            <label for="login-area">Área de atendimento:</label>
+            <select id="login-area">
+                <option value="TI">TI</option>
+                <option value="RH">RH</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Comercial">Comercial</option>
+            </select>
+
+            <label for="login-quadro">Quadro:</label>
+            <select id="login-quadro">
+                <option value="">Selecione...</option>
+                <option value="Incidentes">Incidentes</option>
+                <option value="Solicitações">Solicitações</option>
+            </select>
+
+            <button class="primary" onclick="login()">Acessar Ajuda</button>
+            <p class="muted">Ainda não tem login? <a href="#" onclick="toggleForms()">Crie uma conta</a></p>
+        </div>
+
+        <div class="form-card" id="cadastro-form" style="display:none;">
+            <div class="form-header">
+                <h2>Criar conta</h2>
+            </div>
+            <div class="message" id="cadastro-message"></div>
+
+            <label for="cadastro-nome">Nome</label>
+            <input type="text" id="cadastro-nome" placeholder="Seu nome" required>
+
+            <label for="cadastro-email">Email</label>
+            <input type="email" id="cadastro-email" placeholder="email@empresa.com" required>
+
+            <label for="cadastro-senha">Senha</label>
+            <input type="password" id="cadastro-senha" placeholder="Crie uma senha" required>
+
+            <label for="cadastro-area">Área autorizada</label>
+            <select id="cadastro-area">
+                <option value="TI">TI</option>
+                <option value="RH">RH</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Comercial">Comercial</option>
+            </select>
+
+
+            <button class="primary" onclick="cadastrar()">Cadastrar</button>
+            <p class="muted">Já possui login? <a href="#" onclick="toggleForms()">Entrar</a></p>
+        </div>
+    </div>
+
+    <script src="scrip.js"></script>
+</body>
+</html>
