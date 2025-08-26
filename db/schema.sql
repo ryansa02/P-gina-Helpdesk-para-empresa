@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS tickets (
   requester_name VARCHAR(255) NOT NULL,
   area VARCHAR(100) NOT NULL,
   board VARCHAR(100) NOT NULL,
+  assignee_email VARCHAR(255) NULL,
   status ENUM('ABERTO','FECHADO') NOT NULL DEFAULT 'ABERTO',
   description_open TEXT NOT NULL,
   description_close TEXT NULL,

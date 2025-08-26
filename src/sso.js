@@ -8,6 +8,11 @@ const allowedDomains = (process.env.ALLOWED_DOMAINS || '')
   .map((d) => d.trim().toLowerCase())
   .filter(Boolean);
 
+const allowedEmails = (process.env.ALLOWED_EMAILS || 'ryan31624@gmail.com')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+
 let clientPromise;
 async function getClient() {
   if (!clientPromise) {
@@ -29,8 +34,8 @@ function getUserEmailFromTokens(tokenSet) {
 }
 
 function isDomainAllowed(email) {
-  if (allowedDomains.length === 0) return true;
   const domain = email.split('@')[1];
+  if (allowedEmails.includes(email)) return true;
   return allowedDomains.includes(domain);
 }
 

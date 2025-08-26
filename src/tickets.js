@@ -3,15 +3,19 @@ import express from 'express';
 export const apiRouter = express.Router();
 
 apiRouter.get('/me', (req, res) => {
-  res.json({ user: req.session.user });
+  const user = req.session.user;
+  const isAdmin = user?.email === 'ryan31624@gmail.com';
+  res.json({ user: { ...user, role: isAdmin ? 'ADMIN' : 'USER' } });
 });
 
 apiRouter.get('/tickets', async (req, res, next) => {
   try {
-    const [rows] = await req.db.execute(
-      'SELECT * FROM tickets WHERE requester_email = ? ORDER BY created_at DESC',
-      [req.session.user.email]
-    );
+    const isAdmin = req.session.user.email === 'ryan31624@gmail.com';
+    const query = isAdmin
+      ? 'SELECT * FROM tickets ORDER BY created_at DESC'
+      : 'SELECT * FROM tickets WHERE requester_email = ? ORDER BY created_at DESC';
+    const params = isAdmin ? [] : [req.session.user.email];
+    const [rows] = await req.db.execute(query, params);
     res.json({ tickets: rows });
   } catch (err) {
     next(err);
@@ -37,8 +41,22 @@ apiRouter.post('/tickets', async (req, res, next) => {
   }
 });
 
+apiRouter.post('/tickets/:id/assign', async (req, res, next) => {
+  try {
+    if (req.session.user.email !== 'ryan31624@gmail.com') {
+      return res.status(403).json({ error: 'Apenas o administrador pode assumir chamados.' });
+    }
+    const ticketId = Number(req.params.id);
+    await req.db.execute('UPDATE tickets SET assignee_email = ? WHERE id = ?', [req.session.user.email, ticketId]);
+    res.json({ ok: true });
+  } catch (err) { next(err); }
+});
+
 apiRouter.post('/tickets/:id/close', async (req, res, next) => {
   try {
+    if (req.session.user.email !== 'ryan31624@gmail.com') {
+      return res.status(403).json({ error: 'Apenas o administrador pode fechar chamados.' });
+    }
     const ticketId = Number(req.params.id);
     const { description } = req.body;
     if (!description || String(description).trim().length < 5) {
