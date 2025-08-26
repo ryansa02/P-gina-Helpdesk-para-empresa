@@ -1,3 +1,25 @@
+:root{--bg:#0b1020;--card:#131a2b;--text:#e7eaf3;--muted:#9aa3b2;--brand:#4b8bff;--ok:#17b26a;--err:#ef4444}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+.container{max-width:1000px;margin:0 auto;padding:24px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.brand{font-weight:600;color:var(--text)}
+.user-info{gap:12px;align-items:center}
+.auth button,.secondary{background:transparent;border:1px solid #334155;color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer}
+.ms-login{background:var(--brand);border:none;color:#fff;padding:10px 16px;border-radius:8px;cursor:pointer}
+.content{display:block}
+.card{background:var(--card);border:1px solid #1f2937;border-radius:12px;padding:16px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;margin:8px 0 6px;color:var(--muted)}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0f1626;color:var(--text)}
+.primary{background:var(--brand);border:none;color:#fff;padding:10px 16px;border-radius:8px;cursor:pointer;margin-top:12px}
+.message{margin-top:8px;color:var(--muted)}
+.message.success{color:var(--ok)}.message.error{color:var(--err)}
+.tickets{display:flex;flex-direction:column;gap:10px}
+.ticket{display:flex;justify-content:space-between;align-items:center;background:#0f1626;border:1px solid #1f2937;padding:12px;border-radius:10px}
+.badge{padding:2px 8px;border-radius:999px;border:1px solid #334155;color:var(--muted);font-size:12px}
+.badge.ABERTO{color:#fbbf24;border-color:#fbbf24}.badge.FECHADO{color:var(--ok);border-color:var(--ok)}
+.muted{color:var(--muted)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
 :root{--bg:#0b1324;--card:#111a33;--muted:#8ca5ff33;--text:#e6ecff;--sub:#a5b4fc;--brand:#5b7aff;--brand-700:#4b63db;--border:#273055}
 *{box-sizing:border-box}
 html,body{height:100%}

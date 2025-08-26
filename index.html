@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajuda - Sistema de Chamados | Geórgia Contábl</title>
+    <title>CSC | Centro de Serviços Compartilhados</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,68 +13,117 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="brand">CSC - Geórgia Contábil</h1>
-
-        <div class="form-card" id="login-form">
-            <div class="form-header">
-                <h2>Bem vindo!</h2>
+        <header class="header">
+            <div class="brand">CSC • Geórgia Contábil</div>
+            <div class="user-info" id="user-info" style="display:none;">
+                <span id="user-name"></span>
+                <form id="logout-form" method="post" action="/auth/logout">
+                    <button class="secondary" type="submit">Sair</button>
+                </form>
             </div>
-            <div class="message" id="login-message"></div>
-
-            <label for="login-email">Usuário</label>
-            <input type="email" id="login-email" placeholder="email@empresa.com" autocomplete="username" required>
-
-            <label for="login-senha">Senha...</label>
-            <input type="password" id="login-senha" placeholder="Sua senha" autocomplete="current-password" required>
-
-            <label for="login-area">Área de atendimento:</label>
-            <select id="login-area">
-                <option value="TI">TI</option>
-                <option value="RH">RH</option>
-                <option value="Financeiro">Financeiro</option>
-                <option value="Comercial">Comercial</option>
-            </select>
-
-            <label for="login-quadro">Quadro:</label>
-            <select id="login-quadro">
-                <option value="">Selecione...</option>
-                <option value="Incidentes">Incidentes</option>
-                <option value="Solicitações">Solicitações</option>
-            </select>
-
-            <button class="primary" onclick="login()">Acessar CSC</button>
-            <p class="muted">Ainda não tem login? <a href="#" onclick="toggleForms()">Crie uma conta</a></p>
-        </div>
-
-        <div class="form-card" id="cadastro-form" style="display:none;">
-            <div class="form-header">
-                <h2>Criar conta</h2>
+            <div class="auth" id="signin" style="display:none;">
+                <button class="ms-login" onclick="window.location.href='/auth/login'">Entrar com Microsoft</button>
             </div>
-            <div class="message" id="cadastro-message"></div>
+        </header>
 
-            <label for="cadastro-nome">Nome</label>
-            <input type="text" id="cadastro-nome" placeholder="Seu nome" required>
+        <main class="content">
+            <section class="card" id="open-ticket">
+                <h2>Abrir chamado</h2>
+                <div class="grid">
+                    <div>
+                        <label for="area">Área</label>
+                        <select id="area">
+                            <option value="TI">TI</option>
+                            <option value="RH">RH</option>
+                            <option value="Financeiro">Financeiro</option>
+                            <option value="Comercial">Comercial</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="board">Quadro</label>
+                        <select id="board">
+                            <option value="Incidentes">Incidentes</option>
+                            <option value="Solicitações">Solicitações</option>
+                        </select>
+                    </div>
+                </div>
+                <label for="desc-open">Descrição do problema</label>
+                <textarea id="desc-open" rows="4" placeholder="Descreva o ocorrido..." required></textarea>
+                <button class="primary" id="btn-open">Abrir chamado</button>
+                <div class="message" id="msg-open"></div>
+            </section>
 
-            <label for="cadastro-email">Email</label>
-            <input type="email" id="cadastro-email" placeholder="email@empresa.com" required>
-
-            <label for="cadastro-senha">Senha</label>
-            <input type="password" id="cadastro-senha" placeholder="Crie uma senha" required>
-
-            <label for="cadastro-area">Área autorizada</label>
-            <select id="cadastro-area">
-                <option value="TI">TI</option>
-                <option value="RH">RH</option>
-                <option value="Financeiro">Financeiro</option>
-                <option value="Comercial">Comercial</option>
-            </select>
-
-
-            <button class="primary" onclick="cadastrar()">Cadastrar</button>
-            <p class="muted">Já possui login? <a href="#" onclick="toggleForms()">Entrar</a></p>
-        </div>
+            <section class="card" id="my-tickets">
+                <h2>Meus chamados</h2>
+                <div id="tickets-list" class="tickets"></div>
+            </section>
+        </main>
     </div>
 
-    <script src="scrip.js"></script>
+    <script src="/public/client.js"></script>
+    <script>
+    (async function init() {
+        const user = await window.CSC.fetchMe();
+        if (!user) {
+            document.getElementById('signin').style.display = 'block';
+            document.querySelector('.content').style.display = 'none';
+            return;
+        }
+        document.getElementById('user-info').style.display = 'flex';
+        document.getElementById('user-name').textContent = user.name + ' (' + user.email + ')';
+        document.querySelector('.content').style.display = 'block';
+
+        const btn = document.getElementById('btn-open');
+        btn.addEventListener('click', async () => {
+            const area = document.getElementById('area').value;
+            const board = document.getElementById('board').value;
+            const description = document.getElementById('desc-open').value.trim();
+            const msg = document.getElementById('msg-open');
+            msg.textContent = '';
+            if (description.length < 5) {
+                msg.textContent = 'Descrição de abertura é obrigatória (mín. 5 caracteres).';
+                msg.className = 'message error';
+                return;
+            }
+            try {
+                await window.CSC.createTicket({ area, board, description });
+                msg.textContent = 'Chamado aberto com sucesso!';
+                msg.className = 'message success';
+                document.getElementById('desc-open').value = '';
+                await renderTickets();
+            } catch (e) {
+                msg.textContent = e.message;
+                msg.className = 'message error';
+            }
+        });
+
+        async function renderTickets() {
+            const container = document.getElementById('tickets-list');
+            const tickets = await window.CSC.fetchTickets();
+            if (!tickets.length) { container.innerHTML = '<p class="muted">Nenhum chamado.</p>'; return; }
+            container.innerHTML = tickets.map(t => `
+                <div class="ticket">
+                    <div>
+                        <strong>#${t.id}</strong> • ${t.board} • ${t.area} • <span class="badge ${t.status}">${t.status}</span><br>
+                        <span class="muted">Aberto por ${t.requester_name} em ${new Date(t.created_at).toLocaleString()}</span>
+                    </div>
+                    <div class="actions">
+                        ${t.status === 'ABERTO' ? `<button data-id="${t.id}" class="close-btn">Fechar</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+            container.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', async (ev) => {
+                    const id = ev.currentTarget.getAttribute('data-id');
+                    const description = prompt('Descrição de fechamento (obrigatória):');
+                    if (!description || description.trim().length < 5) { alert('Mínimo 5 caracteres.'); return; }
+                    try { await window.CSC.closeTicket(id, description.trim()); await renderTickets(); }
+                    catch (e) { alert(e.message); }
+                });
+            });
+        }
+        await renderTickets();
+    })();
+    </script>
 </body>
 </html>
