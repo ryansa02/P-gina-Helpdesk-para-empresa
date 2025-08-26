@@ -26,7 +26,7 @@
     </div>
 
     <!-- Authentication Screen -->
-    <div id="auth-screen" class="auth-screen" style="display: none;">
+    <div id="auth-screen" class="auth-screen">
         <div class="auth-container">
             <div class="auth-card">
                 <div class="auth-header">
@@ -40,7 +40,7 @@
                 <div class="auth-content">
                     <div class="auth-info">
                         <h3>Bem-vindo ao CSC</h3>
-                        <p>Acesse o sistema de gestão de chamados com sua conta Microsoft corporativa.</p>
+                        <p>Acesse o sistema de gestão de chamados com sua conta corporativa.</p>
                         
                         <div class="auth-features">
                             <div class="feature">
@@ -59,18 +59,52 @@
                     </div>
                     
                     <div class="auth-actions">
-                        <button id="login-btn" class="btn btn-primary btn-lg" onclick="window.location.href='/auth/login'">
-                            <i class="fab fa-microsoft"></i>
-                            Entrar com Microsoft
-                        </button>
-                        
-                        <div class="auth-domains">
-                            <p>Domínios autorizados:</p>
-                            <div class="domain-tags">
-                                <span class="domain-tag">@georgiacontabil.com.br</span>
-                                <span class="domain-tag">@nine9.com.br</span>
-                                <span class="domain-tag">ryan31624@gmail.com</span>
+                        <div class="login-form" id="login-form">
+                            <div class="form-group">
+                                <label for="login-nome" class="form-label">Nome Completo</label>
+                                <input type="text" id="login-nome" class="form-input" placeholder="Digite seu nome completo" required>
                             </div>
+                            
+                            <div class="form-group">
+                                <label for="login-email" class="form-label">Email</label>
+                                <input type="email" id="login-email" class="form-input" placeholder="seu@email.com" required>
+                                <small class="form-help">Domínios autorizados: @georgiacontabil.com.br, @nine9.com.br, ryan31624@gmail.com</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="login-area" class="form-label">Departamento</label>
+                                <select id="login-area" class="form-select" required>
+                                    <option value="">Selecione o departamento</option>
+                                    <option value="TI">Tecnologia da Informação</option>
+                                    <option value="RH">Recursos Humanos</option>
+                                    <option value="Financeiro">Financeiro</option>
+                                    <option value="Contábil">Contábil</option>
+                                    <option value="Administrativo">Administrativo</option>
+                                    <option value="Comercial">Comercial</option>
+                                    <option value="Operacional">Operacional</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="login-quadro" class="form-label">Quadro de Chamados</label>
+                                <select id="login-quadro" class="form-select" required>
+                                    <option value="">Selecione o quadro</option>
+                                    <option value="Suporte TI">Suporte TI</option>
+                                    <option value="Solicitações RH">Solicitações RH</option>
+                                    <option value="Financeiro">Financeiro</option>
+                                    <option value="Contábil">Contábil</option>
+                                    <option value="Administrativo">Administrativo</option>
+                                    <option value="Comercial">Comercial</option>
+                                    <option value="Operacional">Operacional</option>
+                                </select>
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary btn-lg" onclick="login()">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Entrar no Sistema
+                            </button>
+                            
+                            <div id="login-message" class="message"></div>
                         </div>
                     </div>
                 </div>
@@ -95,7 +129,7 @@
                     </div>
 
                     <nav class="nav">
-                        <div class="nav-item" data-view="dashboard">
+                        <div class="nav-item active" data-view="dashboard">
                             <i class="fas fa-tachometer-alt icon"></i>
                             <span>Dashboard</span>
                         </div>
@@ -103,38 +137,30 @@
                             <i class="fas fa-ticket-alt icon"></i>
                             <span>Chamados</span>
                         </div>
-                        <div class="nav-item admin-only" data-view="admin" style="display: none;">
+                        <div class="nav-item" data-view="new-ticket" id="new-ticket-nav">
+                            <i class="fas fa-plus icon"></i>
+                            <span>Novo Chamado</span>
+                        </div>
+                        <div class="nav-item" data-view="admin" id="admin-nav" style="display: none;">
                             <i class="fas fa-cog icon"></i>
                             <span>Administração</span>
                         </div>
-                        <div class="nav-item admin-only" data-view="reports" style="display: none;">
-                            <i class="fas fa-chart-bar icon"></i>
-                            <span>Relatórios</span>
-                        </div>
                     </nav>
 
-                    <div class="user-info">
-                        <div class="notifications">
-                            <button class="btn btn-secondary btn-sm" id="notifications-btn">
-                                <i class="fas fa-bell"></i>
-                                <span class="notification-badge" style="display: none;">0</span>
-                            </button>
+                    <div class="user-menu">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name" id="user-name">Usuário</div>
+                                <div class="user-role" id="user-role">Usuário</div>
+                            </div>
                         </div>
-                        
-                        <div class="user-avatar" id="user-avatar">
-                            <span id="user-initials">U</span>
-                        </div>
-                        
-                        <div class="user-details">
-                            <div class="user-name" id="user-name">Usuário</div>
-                            <div class="user-role" id="user-role">Usuário</div>
-                        </div>
-                        
-                        <div class="user-menu">
-                            <button class="btn btn-secondary btn-sm" id="user-menu-btn">
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                        </div>
+                        <button class="btn btn-secondary" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Sair
+                        </button>
                     </div>
                 </div>
             </div>
@@ -144,10 +170,10 @@
         <main class="main">
             <div class="container">
                 <!-- Dashboard View -->
-                <div id="dashboard-view" class="view">
+                <div id="dashboard-view" class="view active">
                     <div class="page-header">
                         <h1>Dashboard</h1>
-                        <p>Visão geral do sistema e estatísticas</p>
+                        <p>Visão geral dos chamados e atividades</p>
                     </div>
 
                     <div class="stats-grid">
@@ -156,290 +182,267 @@
                                 <i class="fas fa-ticket-alt"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-value" id="total-tickets">0</div>
+                                <div class="stat-number" id="total-tickets">0</div>
                                 <div class="stat-label">Total de Chamados</div>
                             </div>
                         </div>
-
+                        
                         <div class="stat-card">
-                            <div class="stat-icon warning">
+                            <div class="stat-icon">
                                 <i class="fas fa-clock"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-value" id="open-tickets">0</div>
+                                <div class="stat-number" id="open-tickets">0</div>
                                 <div class="stat-label">Chamados Abertos</div>
                             </div>
                         </div>
-
+                        
                         <div class="stat-card">
-                            <div class="stat-icon success">
+                            <div class="stat-icon">
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-value" id="closed-tickets">0</div>
+                                <div class="stat-number" id="closed-tickets">0</div>
                                 <div class="stat-label">Chamados Fechados</div>
                             </div>
                         </div>
-
+                        
                         <div class="stat-card">
-                            <div class="stat-icon info">
-                                <i class="fas fa-users"></i>
+                            <div class="stat-icon">
+                                <i class="fas fa-user-clock"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-value" id="total-users">0</div>
-                                <div class="stat-label">Usuários Ativos</div>
+                                <div class="stat-number" id="my-tickets">0</div>
+                                <div class="stat-label">Meus Chamados</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="dashboard-grid">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Chamados por Área</h3>
+                    <div class="dashboard-content">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Chamados Recentes</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="recent-tickets-list">
+                                            <p class="text-muted">Carregando chamados...</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="chart-container">
-                                <canvas id="area-chart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Chamados por Status</h3>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="status-chart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Chamados Recentes</h3>
-                            </div>
-                            <div class="recent-tickets" id="recent-tickets">
-                                <!-- Recent tickets will be loaded here -->
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Atividade do Sistema</h3>
-                            </div>
-                            <div class="activity-log" id="activity-log">
-                                <!-- Activity log will be loaded here -->
+                            
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Informações do Usuário</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="user-profile">
+                                            <div class="profile-item">
+                                                <span class="label">Nome:</span>
+                                                <span id="profile-name">-</span>
+                                            </div>
+                                            <div class="profile-item">
+                                                <span class="label">Email:</span>
+                                                <span id="profile-email">-</span>
+                                            </div>
+                                            <div class="profile-item">
+                                                <span class="label">Departamento:</span>
+                                                <span id="profile-department">-</span>
+                                            </div>
+                                            <div class="profile-item">
+                                                <span class="label">Quadro:</span>
+                                                <span id="profile-board">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tickets View -->
-                <div id="tickets-view" class="view" style="display: none;">
+                <div id="tickets-view" class="view">
                     <div class="page-header">
-                        <div class="page-title">
-                            <h1>Gestão de Chamados</h1>
-                            <p>Gerencie e acompanhe todos os chamados do sistema</p>
+                        <h1>Gestão de Chamados</h1>
+                        <p>Visualize e gerencie todos os chamados</p>
+                    </div>
+
+                    <div class="tickets-controls">
+                        <div class="filters">
+                            <select id="status-filter" class="form-select" onchange="filterTickets()">
+                                <option value="">Todos os Status</option>
+                                <option value="Aberto">Aberto</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Fechado">Fechado</option>
+                            </select>
+                            
+                            <select id="priority-filter" class="form-select" onchange="filterTickets()">
+                                <option value="">Todas as Prioridades</option>
+                                <option value="Baixa">Baixa</option>
+                                <option value="Média">Média</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Crítica">Crítica</option>
+                            </select>
+                            
+                            <select id="area-filter" class="form-select" onchange="filterTickets()">
+                                <option value="">Todos os Departamentos</option>
+                                <option value="TI">TI</option>
+                                <option value="RH">RH</option>
+                                <option value="Financeiro">Financeiro</option>
+                                <option value="Contábil">Contábil</option>
+                                <option value="Administrativo">Administrativo</option>
+                                <option value="Comercial">Comercial</option>
+                                <option value="Operacional">Operacional</option>
+                            </select>
                         </div>
-                        <div class="page-actions">
-                            <button class="btn btn-primary" id="new-ticket-btn">
+                        
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="showNewTicketForm()">
                                 <i class="fas fa-plus"></i>
                                 Novo Chamado
                             </button>
                         </div>
                     </div>
 
-                    <!-- Filters -->
-                    <div class="filters-card">
-                        <div class="filters-grid">
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" id="status-filter">
-                                    <option value="">Todos</option>
-                                    <option value="ABERTO">Aberto</option>
-                                    <option value="EM_ANALISE">Em Análise</option>
-                                    <option value="AGUARDANDO">Aguardando</option>
-                                    <option value="RESOLVIDO">Resolvido</option>
-                                    <option value="FECHADO">Fechado</option>
-                                </select>
-                            </div>
+                    <div class="tickets-list" id="tickets-list">
+                        <p class="text-muted">Carregando chamados...</p>
+                    </div>
+                </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Área</label>
-                                <select class="form-select" id="area-filter">
-                                    <option value="">Todas</option>
-                                    <option value="TI">TI</option>
-                                    <option value="RH">RH</option>
-                                    <option value="Financeiro">Financeiro</option>
-                                    <option value="Comercial">Comercial</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Prioridade</label>
-                                <select class="form-select" id="priority-filter">
-                                    <option value="">Todas</option>
-                                    <option value="LOW">Baixa</option>
-                                    <option value="MEDIUM">Média</option>
-                                    <option value="HIGH">Alta</option>
-                                    <option value="CRITICAL">Crítica</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Buscar</label>
-                                <input type="text" class="form-input" id="search-filter" placeholder="Buscar chamados...">
-                            </div>
-                        </div>
+                <!-- New Ticket View -->
+                <div id="new-ticket-view" class="view">
+                    <div class="page-header">
+                        <h1>Novo Chamado</h1>
+                        <p>Crie um novo chamado de suporte</p>
                     </div>
 
-                    <!-- Tickets Table -->
                     <div class="card">
-                        <div class="card-header">
-                            <h3>Chamados</h3>
-                            <div class="table-actions">
-                                <button class="btn btn-secondary btn-sm" id="refresh-btn">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Atualizar
-                                </button>
-                            </div>
-                        </div>
-                        <div class="table-container">
-                            <table class="table" id="tickets-table">
-                                <thead>
-                                    <tr>
-                                        <th>Número</th>
-                                        <th>Título</th>
-                                        <th>Área</th>
-                                        <th>Status</th>
-                                        <th>Prioridade</th>
-                                        <th>Solicitante</th>
-                                        <th>Responsável</th>
-                                        <th>Data</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tickets-tbody">
-                                    <!-- Tickets will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="pagination" id="tickets-pagination">
-                            <!-- Pagination will be loaded here -->
+                        <div class="card-body">
+                            <form id="new-ticket-form" class="form">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="ticket-title" class="form-label">Título do Chamado *</label>
+                                            <input type="text" id="ticket-title" class="form-input" placeholder="Digite o título do chamado" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="ticket-area" class="form-label">Departamento *</label>
+                                            <select id="ticket-area" class="form-select" required>
+                                                <option value="">Selecione o departamento</option>
+                                                <option value="TI">Tecnologia da Informação</option>
+                                                <option value="RH">Recursos Humanos</option>
+                                                <option value="Financeiro">Financeiro</option>
+                                                <option value="Contábil">Contábil</option>
+                                                <option value="Administrativo">Administrativo</option>
+                                                <option value="Comercial">Comercial</option>
+                                                <option value="Operacional">Operacional</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="ticket-priority" class="form-label">Prioridade *</label>
+                                            <select id="ticket-priority" class="form-select" required>
+                                                <option value="">Selecione a prioridade</option>
+                                                <option value="Baixa">Baixa</option>
+                                                <option value="Média">Média</option>
+                                                <option value="Alta">Alta</option>
+                                                <option value="Crítica">Crítica</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="ticket-quadro" class="form-label">Quadro *</label>
+                                            <select id="ticket-quadro" class="form-select" required>
+                                                <option value="">Selecione o quadro</option>
+                                                <option value="Suporte TI">Suporte TI</option>
+                                                <option value="Solicitações RH">Solicitações RH</option>
+                                                <option value="Financeiro">Financeiro</option>
+                                                <option value="Contábil">Contábil</option>
+                                                <option value="Administrativo">Administrativo</option>
+                                                <option value="Comercial">Comercial</option>
+                                                <option value="Operacional">Operacional</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="ticket-description" class="form-label">Descrição *</label>
+                                    <textarea id="ticket-description" class="form-textarea" rows="5" placeholder="Descreva detalhadamente o problema ou solicitação..." required></textarea>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary" onclick="cancelNewTicket()">
+                                        <i class="fas fa-times"></i>
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Criar Chamado
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
 
                 <!-- Admin View -->
-                <div id="admin-view" class="view" style="display: none;">
+                <div id="admin-view" class="view">
                     <div class="page-header">
                         <h1>Administração</h1>
-                        <p>Gerencie usuários, configurações e monitoramento do sistema</p>
+                        <p>Gerencie usuários e configurações do sistema</p>
                     </div>
 
-                    <div class="admin-grid">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Usuários</h3>
-                                <button class="btn btn-primary btn-sm" id="add-user-btn">
-                                    <i class="fas fa-plus"></i>
-                                    Adicionar
-                                </button>
-                            </div>
-                            <div class="table-container">
-                                <table class="table" id="users-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nome</th>
-                                            <th>Email</th>
-                                            <th>Função</th>
-                                            <th>Departamento</th>
-                                            <th>Status</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="users-tbody">
-                                        <!-- Users will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Configurações do Sistema</h3>
-                            </div>
-                            <div class="settings-form" id="settings-form">
-                                <!-- Settings will be loaded here -->
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Logs de Auditoria</h3>
-                            </div>
-                            <div class="audit-logs" id="audit-logs">
-                                <!-- Audit logs will be loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reports View -->
-                <div id="reports-view" class="view" style="display: none;">
-                    <div class="page-header">
-                        <h1>Relatórios</h1>
-                        <p>Gere relatórios detalhados e exporte dados</p>
-                    </div>
-
-                    <div class="reports-grid">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3>Relatório de Chamados</h3>
-                                <div class="report-actions">
-                                    <button class="btn btn-success btn-sm" id="export-excel-btn">
-                                        <i class="fas fa-file-excel"></i>
-                                        Excel
-                                    </button>
-                                    <button class="btn btn-secondary btn-sm" id="export-csv-btn">
-                                        <i class="fas fa-file-csv"></i>
-                                        CSV
-                                    </button>
+                    <div class="admin-content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Usuários do Sistema</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="users-list">
+                                            <p class="text-muted">Carregando usuários...</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="report-filters">
-                                <div class="filters-grid">
-                                    <div class="form-group">
-                                        <label class="form-label">Data Início</label>
-                                        <input type="date" class="form-input" id="start-date">
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>Estatísticas do Sistema</h3>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Data Fim</label>
-                                        <input type="date" class="form-input" id="end-date">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Área</label>
-                                        <select class="form-select" id="report-area-filter">
-                                            <option value="">Todas</option>
-                                            <option value="TI">TI</option>
-                                            <option value="RH">RH</option>
-                                            <option value="Financeiro">Financeiro</option>
-                                            <option value="Comercial">Comercial</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Status</label>
-                                        <select class="form-select" id="report-status-filter">
-                                            <option value="">Todos</option>
-                                            <option value="ABERTO">Aberto</option>
-                                            <option value="FECHADO">Fechado</option>
-                                        </select>
+                                    <div class="card-body">
+                                        <div class="admin-stats">
+                                            <div class="stat-item">
+                                                <span class="label">Total de Usuários:</span>
+                                                <span id="admin-total-users">0</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="label">Chamados Hoje:</span>
+                                                <span id="admin-today-tickets">0</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="label">Chamados Pendentes:</span>
+                                                <span id="admin-pending-tickets">0</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" id="generate-report-btn">
-                                    <i class="fas fa-chart-bar"></i>
-                                    Gerar Relatório
-                                </button>
-                            </div>
-                            <div class="report-content" id="report-content">
-                                <!-- Report content will be loaded here -->
                             </div>
                         </div>
                     </div>
@@ -448,505 +451,24 @@
         </main>
     </div>
 
-    <!-- Modals -->
-    <!-- New Ticket Modal -->
-    <div id="new-ticket-modal" class="modal" style="display: none;">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Novo Chamado</h3>
-                <button class="modal-close" id="close-new-ticket-modal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="new-ticket-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Título *</label>
-                            <input type="text" class="form-input" id="ticket-title" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Área *</label>
-                            <select class="form-select" id="ticket-area" required>
-                                <option value="">Selecione uma área</option>
-                                <option value="TI">TI</option>
-                                <option value="RH">RH</option>
-                                <option value="Financeiro">Financeiro</option>
-                                <option value="Comercial">Comercial</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Quadro *</label>
-                            <select class="form-select" id="ticket-board" required>
-                                <option value="">Selecione um quadro</option>
-                                <option value="Incidentes">Incidentes</option>
-                                <option value="Solicitações">Solicitações</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Prioridade</label>
-                            <select class="form-select" id="ticket-priority">
-                                <option value="MEDIUM">Média</option>
-                                <option value="LOW">Baixa</option>
-                                <option value="HIGH">Alta</option>
-                                <option value="CRITICAL">Crítica</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group full-width">
-                            <label class="form-label">Descrição *</label>
-                            <textarea class="form-textarea" id="ticket-description" rows="4" required 
-                                      placeholder="Descreva detalhadamente o problema ou solicitação..."></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Data de Vencimento</label>
-                            <input type="datetime-local" class="form-input" id="ticket-due-date">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-new-ticket">Cancelar</button>
-                <button class="btn btn-primary" id="submit-new-ticket">
-                    <i class="fas fa-save"></i>
-                    Criar Chamado
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Ticket Detail Modal -->
-    <div id="ticket-detail-modal" class="modal" style="display: none;">
-        <div class="modal-overlay"></div>
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3>Detalhes do Chamado</h3>
-                <button class="modal-close" id="close-ticket-detail-modal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="ticket-detail-content">
-                    <!-- Ticket details will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notifications Modal -->
-    <div id="notifications-modal" class="modal" style="display: none;">
-        <div class="modal-overlay"></div>
+    <div id="ticket-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Notificações</h3>
-                <button class="modal-close" id="close-notifications-modal">
+                <h3 id="modal-ticket-title">Detalhes do Chamado</h3>
+                <button class="modal-close" onclick="closeTicketModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div id="notifications-content">
-                    <!-- Notifications will be loaded here -->
-                </div>
+            <div class="modal-body" id="modal-ticket-content">
+                <!-- Ticket details will be loaded here -->
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/public/client.js"></script>
-    <script>
-        // Main Application Logic
-        class CSCApp {
-            constructor() {
-                this.currentView = 'dashboard';
-                this.currentUser = null;
-                this.init();
-            }
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
 
-            async init() {
-                try {
-                    // Check authentication
-                    this.currentUser = await window.CSC.fetchMe();
-                    
-                    if (!this.currentUser) {
-                        this.showAuthScreen();
-                        return;
-                    }
-
-                    this.showApp();
-                    this.setupEventListeners();
-                    this.loadDashboard();
-                    
-                    // Initialize WebSocket
-                    window.CSC.initSocket(this.currentUser.id);
-                    
-                } catch (error) {
-                    console.error('Initialization error:', error);
-                    this.showAuthScreen();
-                }
-            }
-
-            showAuthScreen() {
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('auth-screen').style.display = 'block';
-                document.getElementById('app').style.display = 'none';
-            }
-
-            showApp() {
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-                
-                this.updateUserInfo();
-                this.setupNavigation();
-            }
-
-            updateUserInfo() {
-                const user = this.currentUser;
-                
-                // Update user display
-                document.getElementById('user-name').textContent = user.name;
-                document.getElementById('user-role').textContent = this.getRoleDisplay(user.role);
-                document.getElementById('user-initials').textContent = this.getInitials(user.name);
-                
-                // Show admin features if applicable
-                if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN') {
-                    document.querySelectorAll('.admin-only').forEach(el => {
-                        el.style.display = 'flex';
-                    });
-                }
-            }
-
-            getRoleDisplay(role) {
-                const roles = {
-                    'SUPER_ADMIN': 'Super Administrador',
-                    'ADMIN': 'Administrador',
-                    'MANAGER': 'Gerente',
-                    'USER': 'Usuário',
-                    'VIEWER': 'Visualizador'
-                };
-                return roles[role] || role;
-            }
-
-            getInitials(name) {
-                return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-            }
-
-            setupNavigation() {
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        const view = item.dataset.view;
-                        this.switchView(view);
-                    });
-                });
-            }
-
-            switchView(view) {
-                // Hide all views
-                document.querySelectorAll('.view').forEach(v => {
-                    v.style.display = 'none';
-                });
-                
-                // Show selected view
-                document.getElementById(`${view}-view`).style.display = 'block';
-                
-                // Update navigation
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                document.querySelector(`[data-view="${view}"]`).classList.add('active');
-                
-                this.currentView = view;
-                
-                // Load view content
-                switch (view) {
-                    case 'dashboard':
-                        this.loadDashboard();
-                        break;
-                    case 'tickets':
-                        this.loadTickets();
-                        break;
-                    case 'admin':
-                        this.loadAdmin();
-                        break;
-                    case 'reports':
-                        this.loadReports();
-                        break;
-                }
-            }
-
-            setupEventListeners() {
-                // New ticket button
-                document.getElementById('new-ticket-btn').addEventListener('click', () => {
-                    this.showNewTicketModal();
-                });
-
-                // Modal close buttons
-                document.getElementById('close-new-ticket-modal').addEventListener('click', () => {
-                    this.hideNewTicketModal();
-                });
-
-                // Form submissions
-                document.getElementById('submit-new-ticket').addEventListener('click', () => {
-                    this.submitNewTicket();
-                });
-
-                // Notifications
-                document.getElementById('notifications-btn').addEventListener('click', () => {
-                    this.showNotificationsModal();
-                });
-            }
-
-            async loadDashboard() {
-                try {
-                    const stats = await window.CSC.getTicketStats();
-                    this.updateDashboardStats(stats);
-                    this.loadRecentTickets();
-                } catch (error) {
-                    console.error('Error loading dashboard:', error);
-                }
-            }
-
-            updateDashboardStats(stats) {
-                document.getElementById('total-tickets').textContent = stats.totalTickets || 0;
-                document.getElementById('open-tickets').textContent = stats.openTickets || 0;
-                document.getElementById('closed-tickets').textContent = stats.closedTickets || 0;
-                document.getElementById('total-users').textContent = stats.totalUsers || 0;
-            }
-
-            async loadRecentTickets() {
-                try {
-                    const tickets = await window.CSC.fetchTickets({ limit: 5 });
-                    this.renderRecentTickets(tickets);
-                } catch (error) {
-                    console.error('Error loading recent tickets:', error);
-                }
-            }
-
-            renderRecentTickets(tickets) {
-                const container = document.getElementById('recent-tickets');
-                if (!tickets.length) {
-                    container.innerHTML = '<p class="text-muted">Nenhum chamado recente.</p>';
-                    return;
-                }
-
-                container.innerHTML = tickets.map(ticket => `
-                    <div class="recent-ticket">
-                        <div class="ticket-info">
-                            <div class="ticket-number">#${ticket.ticket_number}</div>
-                            <div class="ticket-title">${ticket.title}</div>
-                            <div class="ticket-meta">
-                                <span class="ticket-area">${ticket.area}</span>
-                                <span class="ticket-status status-${ticket.status.toLowerCase()}">${ticket.status}</span>
-                            </div>
-                        </div>
-                        <div class="ticket-date">
-                            ${window.CSC.formatDate(ticket.created_at)}
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            async loadTickets() {
-                try {
-                    const tickets = await window.CSC.fetchTickets();
-                    this.renderTicketsTable(tickets);
-                } catch (error) {
-                    console.error('Error loading tickets:', error);
-                }
-            }
-
-            renderTicketsTable(tickets) {
-                const tbody = document.getElementById('tickets-tbody');
-                
-                if (!tickets.length) {
-                    tbody.innerHTML = '<tr><td colspan="9" class="text-center">Nenhum chamado encontrado.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = tickets.map(ticket => `
-                    <tr>
-                        <td><strong>#${ticket.ticket_number}</strong></td>
-                        <td>${ticket.title}</td>
-                        <td>${ticket.area}</td>
-                        <td><span class="badge status-${ticket.status.toLowerCase()}">${ticket.status}</span></td>
-                        <td><span class="badge priority-${ticket.priority.toLowerCase()}">${ticket.priority}</span></td>
-                        <td>${ticket.requester_name}</td>
-                        <td>${ticket.assignee_name || '-'}</td>
-                        <td>${window.CSC.formatDate(ticket.created_at)}</td>
-                        <td>
-                            <div class="table-actions">
-                                <button class="btn btn-secondary btn-sm" onclick="app.viewTicket(${ticket.id})">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                ${this.currentUser.canAssign ? `
-                                    <button class="btn btn-primary btn-sm" onclick="app.assignTicket(${ticket.id})">
-                                        <i class="fas fa-user-plus"></i>
-                                    </button>
-                                ` : ''}
-                                ${this.currentUser.canAssign && ticket.status !== 'FECHADO' ? `
-                                    <button class="btn btn-success btn-sm" onclick="app.closeTicket(${ticket.id})">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
-            }
-
-            showNewTicketModal() {
-                document.getElementById('new-ticket-modal').style.display = 'block';
-            }
-
-            hideNewTicketModal() {
-                document.getElementById('new-ticket-modal').style.display = 'none';
-                document.getElementById('new-ticket-form').reset();
-            }
-
-            async submitNewTicket() {
-                const form = document.getElementById('new-ticket-form');
-                const formData = new FormData(form);
-                
-                const ticketData = {
-                    title: document.getElementById('ticket-title').value,
-                    description: document.getElementById('ticket-description').value,
-                    area: document.getElementById('ticket-area').value,
-                    board: document.getElementById('ticket-board').value,
-                    priority: document.getElementById('ticket-priority').value,
-                    due_date: document.getElementById('ticket-due-date').value || null
-                };
-
-                try {
-                    await window.CSC.createTicket(ticketData);
-                    window.CSC.showToast('Chamado criado com sucesso!', 'success');
-                    this.hideNewTicketModal();
-                    this.loadTickets();
-                } catch (error) {
-                    window.CSC.showToast(error.message, 'error');
-                }
-            }
-
-            async loadAdmin() {
-                try {
-                    const users = await window.CSC.fetchUsers();
-                    this.renderUsersTable(users.users);
-                    
-                    const settings = await window.CSC.getSettings();
-                    this.renderSettings(settings.settings);
-                } catch (error) {
-                    console.error('Error loading admin data:', error);
-                }
-            }
-
-            renderUsersTable(users) {
-                const tbody = document.getElementById('users-tbody');
-                
-                tbody.innerHTML = users.map(user => `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td><span class="badge">${this.getRoleDisplay(user.role)}</span></td>
-                        <td>${user.department || '-'}</td>
-                        <td>
-                            <span class="badge ${user.is_active ? 'badge-success' : 'badge-error'}">
-                                ${user.is_active ? 'Ativo' : 'Inativo'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary btn-sm" onclick="app.editUser('${user.id}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
-
-            renderSettings(settings) {
-                const container = document.getElementById('settings-form');
-                
-                container.innerHTML = settings.map(setting => `
-                    <div class="form-group">
-                        <label class="form-label">${setting.description}</label>
-                        <input type="text" class="form-input" value="${setting.setting_value}" 
-                               onchange="app.updateSetting('${setting.setting_key}', this.value)">
-                    </div>
-                `).join('');
-            }
-
-            async loadReports() {
-                // Reports view will be implemented here
-                console.log('Loading reports...');
-            }
-
-            showNotificationsModal() {
-                document.getElementById('notifications-modal').style.display = 'block';
-                this.loadNotifications();
-            }
-
-            async loadNotifications() {
-                try {
-                    const notifications = await window.CSC.fetchNotifications();
-                    this.renderNotifications(notifications.notifications);
-                } catch (error) {
-                    console.error('Error loading notifications:', error);
-                }
-            }
-
-            renderNotifications(notifications) {
-                const container = document.getElementById('notifications-content');
-                
-                if (!notifications.length) {
-                    container.innerHTML = '<p class="text-muted">Nenhuma notificação.</p>';
-                    return;
-                }
-
-                container.innerHTML = notifications.map(notification => `
-                    <div class="notification-item ${notification.is_read ? 'read' : 'unread'}">
-                        <div class="notification-content">
-                            <div class="notification-title">${notification.title}</div>
-                            <div class="notification-message">${notification.message}</div>
-                            <div class="notification-time">${window.CSC.formatDate(notification.created_at)}</div>
-                        </div>
-                        ${!notification.is_read ? `
-                            <button class="btn btn-secondary btn-sm" onclick="app.markNotificationAsRead(${notification.id})">
-                                <i class="fas fa-check"></i>
-                            </button>
-                        ` : ''}
-                    </div>
-                `).join('');
-            }
-
-            async markNotificationAsRead(id) {
-                try {
-                    await window.CSC.markNotificationAsRead(id);
-                    this.loadNotifications();
-                    window.CSC.updateNotificationBadge();
-                } catch (error) {
-                    console.error('Error marking notification as read:', error);
-                }
-            }
-
-            async updateSetting(key, value) {
-                try {
-                    await window.CSC.updateSetting(key, value);
-                    window.CSC.showToast('Configuração atualizada com sucesso!', 'success');
-                } catch (error) {
-                    window.CSC.showToast('Erro ao atualizar configuração', 'error');
-                }
-            }
-        }
-
-        // Initialize app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            window.app = new CSCApp();
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

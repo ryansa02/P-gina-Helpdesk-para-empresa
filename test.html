@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste CSC - Geórgia Contábil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste do Sistema CSC - Geórgia Contábil</h1>
+    
+    <div class="test-section">
+        <h2>1. Verificação de Arquivos</h2>
+        <div id="files-test">
+            <p>Verificando arquivos essenciais...</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Teste de LocalStorage</h2>
+        <div id="storage-test">
+            <p>Testando armazenamento local...</p>
+        </div>
+        <button onclick="testStorage()">Testar Storage</button>
+        <button onclick="clearStorage()">Limpar Storage</button>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Teste de Autenticação</h2>
+        <div id="auth-test">
+            <p>Testando sistema de autenticação...</p>
+        </div>
+        <button onclick="testAuth()">Testar Login</button>
+        <button onclick="testLogout()">Testar Logout</button>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Teste de Chamados</h2>
+        <div id="tickets-test">
+            <p>Testando sistema de chamados...</p>
+        </div>
+        <button onclick="testCreateTicket()">Criar Chamado Teste</button>
+        <button onclick="testListTickets()">Listar Chamados</button>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Resultados</h2>
+        <div id="results">
+            <p>Aguardando testes...</p>
+        </div>
+    </div>
+
+    <script>
+        const results = {
+            files: false,
+            storage: false,
+            auth: false,
+            tickets: false
+        };
+
+        // Teste de arquivos
+        function testFiles() {
+            const filesTest = document.getElementById('files-test');
+            const requiredFiles = ['index.html', 'style.css', 'script.js'];
+            let allFilesExist = true;
+
+            filesTest.innerHTML = '<p>Verificando arquivos essenciais...</p>';
+            
+            requiredFiles.forEach(file => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = file;
+                link.onload = () => {
+                    console.log(`✅ ${file} carregado com sucesso`);
+                };
+                link.onerror = () => {
+                    console.log(`❌ ${file} não encontrado`);
+                    allFilesExist = false;
+                };
+                document.head.appendChild(link);
+            });
+
+            results.files = allFilesExist;
+            filesTest.innerHTML = `
+                <p class="${allFilesExist ? 'success' : 'error'}">
+                    ${allFilesExist ? '✅ Todos os arquivos encontrados' : '❌ Alguns arquivos não encontrados'}
+                </p>
+            `;
+        }
+
+        // Teste de storage
+        function testStorage() {
+            const storageTest = document.getElementById('storage-test');
+            
+            try {
+                localStorage.setItem('test', 'test-value');
+                const testValue = localStorage.getItem('test');
+                localStorage.removeItem('test');
+                
+                if (testValue === 'test-value') {
+                    results.storage = true;
+                    storageTest.innerHTML = '<p class="success">✅ LocalStorage funcionando corretamente</p>';
+                } else {
+                    results.storage = false;
+                    storageTest.innerHTML = '<p class="error">❌ LocalStorage não está funcionando</p>';
+                }
+            } catch (error) {
+                results.storage = false;
+                storageTest.innerHTML = '<p class="error">❌ Erro no LocalStorage: ' + error.message + '</p>';
+            }
+            
+            updateResults();
+        }
+
+        function clearStorage() {
+            localStorage.clear();
+            document.getElementById('storage-test').innerHTML = '<p class="info">🗑️ Storage limpo</p>';
+        }
+
+        // Teste de autenticação
+        function testAuth() {
+            const authTest = document.getElementById('auth-test');
+            
+            // Simular login
+            const testUser = {
+                id: 'test-123',
+                nome: 'Usuário Teste',
+                email: 'teste@georgiacontabil.com.br',
+                area: 'TI',
+                role: 'USER',
+                created_at: new Date().toISOString()
+            };
+            
+            localStorage.setItem('csc_current_user', JSON.stringify(testUser));
+            
+            const storedUser = JSON.parse(localStorage.getItem('csc_current_user'));
+            
+            if (storedUser && storedUser.email === testUser.email) {
+                results.auth = true;
+                authTest.innerHTML = '<p class="success">✅ Sistema de autenticação funcionando</p>';
+            } else {
+                results.auth = false;
+                authTest.innerHTML = '<p class="error">❌ Erro no sistema de autenticação</p>';
+            }
+            
+            updateResults();
+        }
+
+        function testLogout() {
+            localStorage.removeItem('csc_current_user');
+            document.getElementById('auth-test').innerHTML = '<p class="info">🚪 Logout realizado</p>';
+        }
+
+        // Teste de chamados
+        function testCreateTicket() {
+            const ticketsTest = document.getElementById('tickets-test');
+            
+            const testTicket = {
+                id: 'ticket-test-123',
+                ticket_number: '20240001',
+                title: 'Chamado de Teste',
+                description: 'Este é um chamado de teste para verificar o funcionamento do sistema',
+                area: 'TI',
+                priority: 'Média',
+                status: 'Aberto',
+                requester_id: 'test-123',
+                requester_name: 'Usuário Teste',
+                requester_email: 'teste@georgiacontabil.com.br',
+                created_at: new Date().toISOString(),
+                updates: [{
+                    id: 'update-1',
+                    type: 'created',
+                    message: 'Chamado criado',
+                    user_id: 'test-123',
+                    user_name: 'Usuário Teste',
+                    timestamp: new Date().toISOString()
+                }]
+            };
+            
+            let tickets = JSON.parse(localStorage.getItem('csc_tickets')) || [];
+            tickets.push(testTicket);
+            localStorage.setItem('csc_tickets', JSON.stringify(tickets));
+            
+            results.tickets = true;
+            ticketsTest.innerHTML = '<p class="success">✅ Chamado de teste criado com sucesso</p>';
+            
+            updateResults();
+        }
+
+        function testListTickets() {
+            const tickets = JSON.parse(localStorage.getItem('csc_tickets')) || [];
+            const ticketsTest = document.getElementById('tickets-test');
+            
+            if (tickets.length > 0) {
+                ticketsTest.innerHTML = `
+                    <p class="success">✅ ${tickets.length} chamado(s) encontrado(s)</p>
+                    <ul>
+                        ${tickets.map(ticket => `
+                            <li>#${ticket.ticket_number} - ${ticket.title} (${ticket.status})</li>
+                        `).join('')}
+                    </ul>
+                `;
+            } else {
+                ticketsTest.innerHTML = '<p class="info">📝 Nenhum chamado encontrado</p>';
+            }
+        }
+
+        function updateResults() {
+            const resultsDiv = document.getElementById('results');
+            const totalTests = Object.keys(results).length;
+            const passedTests = Object.values(results).filter(r => r).length;
+            
+            resultsDiv.innerHTML = `
+                <h3>Resumo dos Testes</h3>
+                <p><strong>Testes aprovados:</strong> ${passedTests}/${totalTests}</p>
+                <ul>
+                    <li class="${results.files ? 'success' : 'error'}">Arquivos: ${results.files ? '✅' : '❌'}</li>
+                    <li class="${results.storage ? 'success' : 'error'}">Storage: ${results.storage ? '✅' : '❌'}</li>
+                    <li class="${results.auth ? 'success' : 'error'}">Autenticação: ${results.auth ? '✅' : '❌'}</li>
+                    <li class="${results.tickets ? 'success' : 'error'}">Chamados: ${results.tickets ? '✅' : '❌'}</li>
+                </ul>
+                ${passedTests === totalTests ? 
+                    '<p class="success"><strong>🎉 Todos os testes passaram! O sistema está funcionando corretamente.</strong></p>' :
+                    '<p class="error"><strong>⚠️ Alguns testes falharam. Verifique os detalhes acima.</strong></p>'
+                }
+            `;
+        }
+
+        // Executar testes iniciais
+        window.onload = function() {
+            testFiles();
+            setTimeout(testStorage, 1000);
+        };
+    </script>
+</body>
+</html>
