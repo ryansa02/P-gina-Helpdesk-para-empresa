@@ -5,10 +5,10 @@
  */
 
 // Configurações do banco de dados
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'csc_georgia');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'cscgeorgia.mysql.dbaas.com.br');
+define('DB_NAME', 'cscgeorgia');
+define('DB_USER', 'cscgeorgia');
+define('DB_PASS', 'G30rg14@2025');
 define('DB_CHARSET', 'utf8mb4');
 
 // Configurações da aplicação

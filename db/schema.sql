@@ -2,7 +2,7 @@
 -- CSC Geórgia Contábil - Centro de Serviços Compartilhados
 
 -- Criar banco de dados
-CREATE DATABASE IF NOT EXISTS csc_georgia CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- CREATE DATABASE IF NOT EXISTS csc_georgia CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE csc_georgia;
 
 -- Tabela de usuários
