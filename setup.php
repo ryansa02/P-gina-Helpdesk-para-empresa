@@ -67,14 +67,25 @@ function createTables() {
     try {
         $db = getDB();
         $schema = file_get_contents('db/schema.sql');
-        
-        // Executar comandos SQL
+
+        if ($schema === false) {
+            throw new Exception('Não foi possível ler db/schema.sql');
+        }
+
+        // Remover linhas USE e blocos de DELIMITER/BEGIN/END (triggers) para execução via PHP
+        $schema = preg_replace('/^\s*USE\s+[^;]+;\s*$/mi', '', $schema);
+        // Remover seções entre linhas que iniciam com DELIMITER e a próxima linha que contenha apenas DELIMITER
+        $schema = preg_replace('/DELIMITER\s+[^\n]*[\s\S]*?DELIMITER\s*;\s*/mi', '', $schema);
+
+        // Quebrar por ponto e vírgula fora de triggers
         $commands = explode(';', $schema);
         foreach ($commands as $command) {
             $command = trim($command);
-            if (!empty($command)) {
-                $db->query($command);
+            // Ignorar comentários e linhas vazias
+            if ($command === '' || strpos($command, '--') === 0) {
+                continue;
             }
+            $db->query($command);
         }
         
         return ['status' => true, 'message' => 'Tabelas criadas com sucesso'];
@@ -88,14 +99,19 @@ function checkTables() {
     try {
         $db = getDB();
         $tables = ['users', 'tickets', 'ticket_updates', 'audit_logs', 'notifications', 'settings'];
-        $existing = [];
-        
-        foreach ($tables as $table) {
-            $result = $db->query("SHOW TABLES LIKE ?", [$table]);
-            $existing[$table] = $result->rowCount() > 0;
+        $placeholders = implode(',', array_fill(0, count($tables), '?'));
+        $sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name IN ($placeholders)";
+        $rows = $db->fetchAll($sql, $tables);
+
+        $found = array_fill_keys($tables, false);
+        foreach ($rows as $row) {
+            $name = isset($row['table_name']) ? $row['table_name'] : (isset($row['TABLE_NAME']) ? $row['TABLE_NAME'] : null);
+            if ($name !== null && isset($found[$name])) {
+                $found[$name] = true;
+            }
         }
-        
-        return $existing;
+
+        return $found;
     } catch (Exception $e) {
         return false;
     }

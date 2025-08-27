@@ -4,15 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSC | Centro de Serviços Compartilhados - Geórgia Contábil</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.0.1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="description" content="Sistema de Gestão de Chamados - Centro de Serviços Compartilhados">
     <meta name="theme-color" content="#1e293b">
+    <noscript>
+        <style>
+            .loading-screen{display:none!important}
+            .auth-screen{display:flex!important}
+        </style>
+    </noscript>
 </head>
 <body>
+    <!-- API/Connectivity Warning -->
+    <div id="api-warning" style="display:none;position:fixed;left:0;right:0;top:0;z-index:1201;background:#7f1d1d;color:#fff;border-bottom:1px solid #991b1b;padding:10px 16px;font-family:Inter,system-ui,sans-serif;font-size:14px;text-align:center;">
+        Backend indisponível. Verifique se o PHP/Apache está rodando e acesse via http://localhost/ (não abra o arquivo diretamente).
+    </div>
     <!-- Loading Screen -->
     <div id="loading-screen" class="loading-screen">
         <div class="loading-content">
@@ -469,6 +479,21 @@
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="script.js"></script>
+    <script>
+      // Fallback: se o app não iniciar, mostrar a tela de login para evitar tela travada
+      (function(){
+        var started = false;
+        window.__cscStarted = function(){ started = true; };
+        setTimeout(function(){
+          if(!started){
+            var l = document.getElementById('loading-screen');
+            if(l) l.style.display = 'none';
+            var a = document.getElementById('auth-screen');
+            if(a) a.style.display = 'flex';
+          }
+        }, 1500);
+      })();
+    </script>
+    <script src="script.js?v=1.0.1"></script>
 </body>
 </html>

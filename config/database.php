@@ -14,7 +14,7 @@ define('DB_CHARSET', 'utf8mb4');
 // Configurações da aplicação
 define('APP_NAME', 'CSC Geórgia Contábil');
 define('APP_VERSION', '1.0.0');
-define('APP_URL', 'http://localhost/csc');
+define('APP_URL', 'http://cscgrupogeorgia.tecnologia.ws');
 
 // Configurações de segurança
 define('SESSION_SECRET', 'csc-georgia-secret-key-2024');
@@ -34,6 +34,20 @@ define('ALLOWED_EMAILS', ['ryan31624@gmail.com']);
 define('UPLOAD_PATH', '../uploads/');
 define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
 define('ALLOWED_FILE_TYPES', ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']);
+
+// Polyfill para getallheaders em ambientes CGI/FPM
+if (!function_exists('getallheaders')) {
+    function getallheaders() {
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if (strpos($name, 'HTTP_') === 0) {
+                $key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $headers[$key] = $value;
+            }
+        }
+        return $headers;
+    }
+}
 
 /**
  * Classe de conexão com o banco de dados

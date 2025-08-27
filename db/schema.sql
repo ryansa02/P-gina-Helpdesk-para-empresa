@@ -3,7 +3,7 @@
 
 -- Criar banco de dados
 -- CREATE DATABASE IF NOT EXISTS csc_georgia CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE csc_georgia;
+-- USE csc_georgia; -- deixe o DB selecionado na conexão
 
 -- Tabela de usuários
 CREATE TABLE IF NOT EXISTS users (

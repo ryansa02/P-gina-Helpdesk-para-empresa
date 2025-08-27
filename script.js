@@ -718,7 +718,22 @@ function closeTicketModal() {
 
 // Inicializar aplicação quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new CSCApp();
+    // Teste de backend e inicialização robusta
+    const warning = document.getElementById('api-warning');
+    const startApp = () => { window.app = new CSCApp(); if (window.__cscStarted) window.__cscStarted(); };
+
+    fetch(`${SYSTEM_CONFIG.API_BASE_URL}/ping.php`, { cache: 'no-store' })
+        .then(r => r.json())
+        .then(json => {
+            if (!json || json.ok !== true) {
+                if (warning) warning.style.display = 'block';
+            }
+            startApp();
+        })
+        .catch(() => {
+            if (warning) warning.style.display = 'block';
+            startApp();
+        });
 });
 
 // Fechar modal ao clicar fora

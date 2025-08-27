@@ -4,37 +4,42 @@
 # Habilitar mod_rewrite
 RewriteEngine On
 
-# Configurações de segurança
+# Configurações de segurança (compatível Apache 2.2 e 2.4)
 <Files "config/database.php">
-    Order allow,deny
-    Deny from all
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </Files>
 
 <Files "*.sql">
-    Order allow,deny
-    Deny from all
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </Files>
 
 <Files ".env">
-    Order allow,deny
-    Deny from all
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </Files>
 
-# Proteger diretórios sensíveis
-<Directory "config">
-    Order allow,deny
-    Deny from all
-</Directory>
-
-<Directory "db">
-    Order allow,deny
-    Deny from all
-</Directory>
-
-<Directory "logs">
-    Order allow,deny
-    Deny from all
-</Directory>
+# Proteger diretórios sensíveis (não usar <Directory> em .htaccess)
+# Bloqueia acesso direto via URL aos diretórios listados
+RewriteRule ^config/ - [F]
+RewriteRule ^db/ - [F]
+RewriteRule ^logs/ - [F]
 
 # Configurações de cache para arquivos estáticos
 <IfModule mod_expires.c>
@@ -77,8 +82,8 @@ RewriteEngine On
     # Referrer Policy
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     
-    # Content Security Policy
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'"
+    # Content Security Policy (permite Google Fonts e CDNJS para Font Awesome)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data:; connect-src 'self'"
     
     # CORS para APIs
     <FilesMatch "\.(php)$">
@@ -88,24 +93,7 @@ RewriteEngine On
     </FilesMatch>
 </IfModule>
 
-# Configurações de PHP (se disponível)
-<IfModule mod_php.c>
-    # Configurações de segurança
-    php_flag display_errors Off
-    php_flag log_errors On
-    php_value error_log logs/php_errors.log
-    
-    # Configurações de upload
-    php_value upload_max_filesize 10M
-    php_value post_max_size 10M
-    php_value max_execution_time 30
-    php_value memory_limit 128M
-    
-    # Configurações de sessão
-    php_value session.cookie_httponly 1
-    php_value session.cookie_secure 1
-    php_value session.use_strict_mode 1
-</IfModule>
+# Removido bloco mod_php para compatibilidade com PHP-FPM/hosts compartilhados
 
 # Redirecionamentos para HTTPS (descomente em produção)
 # RewriteCond %{HTTPS} off
@@ -120,8 +108,13 @@ DirectoryIndex index.html index.php
 
 # Configurações de arquivos
 <Files "*.log">
-    Order allow,deny
-    Deny from all
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </Files>
 
 # Configurações de cache para APIs
@@ -139,7 +132,4 @@ DirectoryIndex index.html index.php
 #     </Location>
 # </IfModule>
 
-# Configurações de logging
-LogLevel warn
-CustomLog logs/access.log combined
-ErrorLog logs/error.log
+# Diretivas de logging não são permitidas em .htaccess (deixe no vhost)
